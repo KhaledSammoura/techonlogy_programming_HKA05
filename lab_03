@@ -5,11 +5,10 @@ using namespace std;
 
 // Класс "Вершина"
 class Vertex {
-protected:
+public:
     double x, y; 
     double angle;
 
-public:
     Vertex(double x, double y, double angle) : x(x), y(y), angle(angle) {}
 
     void move(double dx, double dy) { 
@@ -20,19 +19,14 @@ public:
     void rotate(double da) { 
         angle += da;
     }
-
-    double getX() const { return x; }
-    double getY() const { return y; }
-    double getAngle() const { return angle; }
 };
 
-// Базовый класс "Геометрический объект"
 class GeometricObject {
 public:
     virtual void display() = 0; 
     virtual void remove() = 0; 
-    virtual void move(double dx, double dy) = 0; // Добавлено
-    virtual void rotate(double da) = 0; // Добавлено
+    virtual void move(double dx, double dy) = 0; 
+    virtual void rotate(double da) = 0; 
 };
 
 // Класс "Точка"
@@ -41,7 +35,7 @@ public:
     Point(double x, double y, double angle) : Vertex(x, y, angle) {}
 
     void display() {
-        cout << "Точка с координатами (" << getX() << ", " << getY() << ") под углом " << getAngle() << " градусов" << endl;
+        cout << "Точка с координатами (" << x << ", " << y << ") под углом " << angle << " градусов" << endl;
     }
 
     void remove() {
@@ -49,11 +43,11 @@ public:
     }
 
     void move(double dx, double dy) {
-        Vertex::move(dx, dy); // Используем метод из Vertex
+        Vertex::move(dx, dy); 
     }
 
     void rotate(double da) {
-        Vertex::rotate(da); // Используем метод из Vertex
+        Vertex::rotate(da); 
     }
 };
 
@@ -67,7 +61,7 @@ public:
     Line(double x, double y, double angle, double length) : start(x, y, angle), length(length) {}
 
     void display() override {
-        cout << "Линия длиной " << length << " с началом в (" << start.getX() << ", " << start.getY() << ") под углом " << start.getAngle() << " градусов" << endl;
+        cout << "Линия длиной " << length << " с началом в (" << start.x << ", " << start.y << ") под углом " << start.angle << " градусов" << endl;
     }
 
     void remove() override {
@@ -93,7 +87,7 @@ public:
     Square(double x, double y, double angle, double side) : center(x, y, angle), side(side) {}
 
     void display() override {
-        cout << "Квадрат со стороной " << side << " с центром в (" << center.getX() << ", " << center.getY() << ") под углом " << center.getAngle() << " градусов" << endl;
+        cout << "Квадрат со стороной " << side << " с центром в (" << center.x << ", " << center.y << ") под углом " << center.angle << " градусов" << endl;
     }
 
     void remove() override {
@@ -119,7 +113,7 @@ public:
     Rhombus(double x, double y, double angle, double d1, double d2) : center(x, y, angle), diagonal1(d1), diagonal2(d2) {}
 
     void display() override {
-        cout << "Ромб с диагоналями " << diagonal1 << " и " << diagonal2 << " с центром в (" << center.getX() << ", " << center.getY() << ") под углом " << center.getAngle() << " градусов" << endl;
+        cout << "Ромб с диагоналями " << diagonal1 << " и " << diagonal2 << " с центром в (" << center.x << ", " << center.y << ") под углом " << center.angle << " градусов" << endl;
     }
 
     void remove() override {
@@ -145,7 +139,7 @@ public:
     Rectangle(double x, double y, double angle, double w, double h) : center(x, y, angle), width(w), height(h) {}
 
     void display() override {
-        cout << "Прямоугольник с шириной " << width << " и высотой " << height << " с центром в (" << center.getX() << ", " << center.getY() << ") под углом " << center.getAngle() << " градусов" << endl;
+        cout << "Прямоугольник с шириной " << width << " и высотой " << height << " с центром в (" << center.x << ", " << center.y << ") под углом " << center.angle << " градусов" << endl;
     }
 
     void remove() override {
@@ -171,7 +165,7 @@ public:
     Parallelogram(double x, double y, double angle, double b, double h) : center(x, y, angle), base(b), height(h) {}
 
     void display() override {
-        cout << "Параллелограмм с основанием " << base << " и высотой " << height << " с центром в (" << center.getX() << ", " << center.getY() << ") под углом " << center.getAngle() << " градусов" << endl;
+        cout << "Параллелограмм с основанием " << base << " и высотой " << height << " с центром в (" << center.x << ", " << center.y << ") под углом " << center.angle << " градусов" << endl;
     }
 
     void remove() override {
@@ -218,4 +212,3 @@ int main() {
 
     return 0;
 }
-
