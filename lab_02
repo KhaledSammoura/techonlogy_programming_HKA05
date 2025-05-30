@@ -1,0 +1,361 @@
+#include <iostream>
+using namespace std;
+
+class vect {
+private:
+    int dim;       // размерность вектора
+    double* b;     // массив элементов
+    int num;       // номер объекта
+    static int count; // счетчик объектов
+
+public:
+    // Конструктор
+    vect(int d) : dim(d), num(++count) {
+        b = new double[dim];
+        for (int i = 0; i < dim; i++) b[i] = 0;
+        cout << "Vector " << num << " created (dim=" << dim << ")" << endl;
+    }
+
+    // Конструктор копирования
+    vect(const vect& v) : dim(v.dim), num(++count) {
+        b = new double[dim];
+        for (int i = 0; i < dim; i++) b[i] = v.b[i];
+        cout << "Vector " << num << " copied from vector " << v.num << endl;
+    }
+    
+    // Деструктор
+    ~vect() {
+        cout << "Vector #" << num << " destroyed" << endl;
+        delete[] b;
+    }
+
+    // Методы доступа
+    int getDim() const { return dim; }
+    double getElement(int i) const { return b[i]; }
+    void setElement(int i, double val) { b[i] = val; }
+
+    // Операторы
+    vect operator+(const vect& v) const {
+        if (dim != v.dim) {
+            cout << "Error: Dimensions don't match for addition" << endl;
+            return *this;
+        }
+        vect result(dim);
+        for (int i = 0; i < dim; i++) {
+            result.b[i] = b[i] + v.b[i];
+        }
+        cout << "Vector #" << num << " + Vector #" << v.num << " = Vector #" << result.num << endl;
+        return result;
+    }
+
+    vect operator-(const vect& v) const {
+        if (dim != v.dim) {
+            cout << "Error: Dimensions don't match for subtraction" << endl;
+            return *this;
+        }
+        vect result(dim);
+        for (int i = 0; i < dim; i++) {
+            result.b[i] = b[i] - v.b[i];
+        }
+        cout << "Vector #" << num << " - Vector #" << v.num << " = Vector #" << result.num << endl;
+        return result;
+    }
+
+    vect operator-() const {
+        vect result(dim);
+        for (int i = 0; i < dim; i++) {
+            result.b[i] = -b[i];
+        }
+        cout << "Negation of Vector #" << num << " = Vector #" << result.num << endl;
+        return result;
+    }
+
+    double operator*(const vect& v) const {
+        if (dim != v.dim) {
+            cout << "Error: Dimensions don't match for dot product" << endl;
+            return 0;
+        }
+        double result = 0;
+        for (int i = 0; i < dim; i++) {
+            result += b[i] * v.b[i];
+        }
+        cout << "Dot product of Vector #" << num << " and Vector #" << v.num << " = " << result << endl;
+        return result;
+    }
+
+    vect& operator=(const vect& v) {
+        if (this == &v) return *this;
+
+        if (dim != v.dim) {
+            delete[] b;
+            dim = v.dim;
+            b = new double[dim];
+        }
+
+        for (int i = 0; i < dim; i++) {
+            b[i] = v.b[i];
+        }
+
+        cout << "Vector #" << num << " assigned from Vector #" << v.num << endl;
+        return *this;
+    }
+
+    // Дружественные функции
+    friend vect operator*(double k, const vect& v);
+    friend ostream& operator<<(ostream& os, const vect& v);
+    friend class matr;
+};
+
+// Внешние операторы
+vect operator*(double k, const vect& v) {
+    vect result(v.dim);
+    for (int i = 0; i < v.dim; i++) {
+        result.b[i] = k * v.b[i];
+    }
+    cout << k << " * Vector #" << v.num << " = Vector #" << result.num << endl;
+    return result;
+}
+
+ostream& operator<<(ostream& os, const vect& v) {
+    os << "Vector #" << v.num << " (";
+    for (int i = 0; i < v.dim; i++) {
+        os << v.b[i];
+        if (i < v.dim - 1) os << ", ";
+    }
+    os << ")";
+    return os;
+}
+
+class matr {
+private:
+    int dim;       // размерность матрицы
+    double* a;     // массив элементов (плоское представление)
+    int num;       // номер объекта
+    static int count; // счетчик объектов
+
+public:
+    // Конструктор
+    matr(int d) : dim(d), num(++count) {
+        a = new double[dim * dim];
+        for (int i = 0; i < dim * dim; i++) a[i] = 0;
+        cout << "Matrix #" << num << " created (dim=" << dim << ")" << endl;
+    }
+// Конструктор копирования
+    matr(const matr& m) : dim(m.dim), num(++count) {
+        a = new double[dim * dim];
+        for (int i = 0; i < dim * dim; i++) a[i] = m.a[i];
+        cout << "Matrix #" << num << " copied from matrix #" << m.num << endl;
+    }
+
+    // Деструктор
+    ~matr() {
+        cout << "Matrix #" << num << " destroyed" << endl;
+        delete[] a;
+    }
+
+    // Методы доступа
+    int getDim() const { return dim; }
+    double getElement(int i, int j) const { return a[i * dim + j]; }
+    void setElement(int i, int j, double val) { a[i * dim + j] = val; }
+
+    // Операторы
+    matr operator+(const matr& m) const {
+        if (dim != m.dim) {
+            cout << "Error: Dimensions don't match for addition" << endl;
+            return *this;
+        }
+        matr result(dim);
+        for (int i = 0; i < dim * dim; i++) {
+            result.a[i] = a[i] + m.a[i];
+        }
+        cout << "Matrix #" << num << " + Matrix #" << m.num << " = Matrix #" << result.num << endl;
+        return result;
+    }
+
+    matr operator-(const matr& m) const {
+        if (dim != m.dim) {
+            cout << "Error: Dimensions don't match for subtraction" << endl;
+            return *this;
+        }
+        matr result(dim);
+        for (int i = 0; i < dim * dim; i++) {
+            result.a[i] = a[i] - m.a[i];
+        }
+        cout << "Matrix #" << num << " - Matrix #" << m.num << " = Matrix #" << result.num << endl;
+        return result;
+    }
+
+    matr operator-() const {
+        matr result(dim);
+        for (int i = 0; i < dim * dim; i++) {
+            result.a[i] = -a[i];
+        }
+        cout << "Negation of Matrix #" << num << " = Matrix #" << result.num << endl;
+        return result;
+    }
+
+    matr operator*(const matr& m) const {
+        if (dim != m.dim) {
+            cout << "Error: Dimensions don't match for multiplication" << endl;
+            return *this;
+        }
+        matr result(dim);
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                double sum = 0;
+                for (int k = 0; k < dim; k++) {
+                    sum += getElement(i, k) * m.getElement(k, j);
+                }
+                result.setElement(i, j, sum);
+            }
+        }
+        cout << "Matrix #" << num << " * Matrix #" << m.num << " = Matrix #" << result.num << endl;
+        return result;
+    }
+
+    vect operator*(const vect& v) const {
+        if (dim != v.getDim()) {
+            cout << "Error: Dimensions don't match for matrix-vector multiplication" << endl;
+            return vect(v.getDim());
+        }
+        vect result(dim);
+        for (int i = 0; i < dim; i++) {
+            double sum = 0;
+            for (int j = 0; j < dim; j++) {
+                sum += getElement(i, j) * v.getElement(j);
+            }
+            result.setElement(i, sum);
+        }
+        cout << "Matrix #" << num << " * Vector multiplication = Vector #" << result.num << endl;
+        return result;
+    }
+
+    matr& operator=(const matr& m) {
+        if (this == &m) return *this;
+
+        if (dim != m.dim) {
+            delete[] a;
+            dim = m.dim;
+            a = new double[dim * dim];
+        }
+
+        for (int i = 0; i < dim * dim; i++) {
+            a[i] = m.a[i];
+        }
+
+        cout << "Matrix #" << num << " assigned from Matrix #" << m.num << endl;
+        return *this;
+    }
+
+    // Дружественные функции
+    friend matr operator*(double k, const matr& m);
+    friend ostream& operator<<(ostream& os, const matr& m);
+    friend class vect;
+};
+
+// Внешние операторы
+matr operator*(double k, const matr& m) {
+    matr result(m.dim);
+    for (int i = 0; i < m.dim * m.dim; i++) {
+        result.a[i] = k * m.a[i];
+    }
+    cout << k << " * Matrix #" << m.num << " = Matrix #" << result.num << endl;
+    return result;
+}
+ostream& operator<<(ostream& os, const matr& m) {
+    os << "Matrix #" << m.num << " [" << endl;
+    for (int i = 0; i < m.dim; i++) {
+        os << "  ";
+        for (int j = 0; j < m.dim; j++) {
+            os << m.getElement(i, j);
+            if (j < m.dim - 1) os << ", ";
+        }
+        os << endl;
+    }
+    os << "]";
+    return os;
+}
+
+// Инициализация статических членов
+int vect::count = 0;
+int matr::count = 0;
+
+int main() {
+    // Операции с векторами
+    cout << "=== Vector Operations ===" << endl;
+    vect v1(3);
+    v1.setElement(0, 1.0);
+    v1.setElement(1, 2.0);
+    v1.setElement(2, 3.0);
+
+    vect v2(3);
+    v2.setElement(0, 4.0);
+    v2.setElement(1, 5.0);
+    v2.setElement(2, 6.0);
+
+    cout << v1 << endl;
+    cout << v2 << endl;
+
+    vect v3 = v1 + v2;
+    cout << v3 << endl;
+
+    vect v4 = v1 - v2;
+    cout << v4 << endl;
+
+    vect v5 = -v1;
+    cout << v5 << endl;
+
+    double dot = v1 * v2;
+    cout << "Dot product: " << dot << endl;
+
+    vect v6 = 2.5 * v1;
+    cout << v6 << endl;
+
+    v6 = v2;
+    cout << v6 << endl;
+
+    // Операции с матрицами
+    cout << "\n=== Matrix Operations ===" << endl;
+    matr m1(2);
+    m1.setElement(0, 0, 1.0);
+    m1.setElement(0, 1, 2.0);
+    m1.setElement(1, 0, 3.0);
+    m1.setElement(1, 1, 4.0);
+
+    matr m2(2);
+    m2.setElement(0, 0, 5.0);
+    m2.setElement(0, 1, 6.0);
+    m2.setElement(1, 0, 7.0);
+    m2.setElement(1, 1, 8.0);
+
+    cout << m1 << endl;
+    cout << m2 << endl;
+
+    matr m3 = m1 + m2;
+    cout << m3 << endl;
+
+    matr m4 = m1 - m2;
+    cout << m4 << endl;
+
+    matr m5 = -m1;
+    cout << m5 << endl;
+
+    matr m6 = m1 * m2;
+    cout << m6 << endl;
+
+    matr m7 = 2.5 * m1;
+    cout << m7 << endl;
+
+    m7 = m2;
+    cout << m7 << endl;
+
+    // Умножение матрицы на вектор
+    vect v7(2);
+    v7.setElement(0, 1.0);
+    v7.setElement(1, 2.0);
+
+    vect v8 = m1 * v7;
+    cout << v8 << endl;
+
+    return 0;
+}
